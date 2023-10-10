@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'
+import ImageLoader from './components/ImageLoader'
+import { useAppDispatch, useAppSelector } from './hooks/typedReact-ReduxHooks'
+import { fetchUserData, isAuthorizedSelector, loginUser } from './redux/reducer/user'
+import CurrenciesList from './components/CurrenciesList'
 
-function App() {
+function App () {
+  const dispatch = useAppDispatch()
+  const isAuth = useAppSelector(isAuthorizedSelector)
+
+  useEffect(() => {
+    dispatch(fetchUserData())
+  }, [])
+
+  const loginHandler = () => {
+    dispatch(loginUser({ login: 'test@test.com', password: '1234' }))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      {isAuth
+        ? <ImageLoader />
+        : <div style={{
+          color: '#fff',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          cursor: 'pointer'
+        }}
+        onClick={loginHandler}
         >
-          Learn React
-        </a>
-      </header>
+          LOGIN
+        </div>
+      }
+      <CurrenciesList />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
